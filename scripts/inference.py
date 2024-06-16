@@ -27,8 +27,11 @@ def main(args):
         pe = pe.half()
         vae.vae = vae.vae.half()
         unet.model = unet.model.half()
-    
-    inference_config = OmegaConf.load(args.inference_config)
+    if args.video_path and args.audio_path:
+        inference_config = {}
+        inference_config["default"] = { "video_path": args.video_path, "audio_path": args.audio_path}
+    else:
+        inference_config = OmegaConf.load(args.inference_config)
     print(inference_config)
     for task_id in inference_config:
         video_path = inference_config[task_id]["video_path"]
@@ -142,7 +145,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--inference_config", type=str, default="configs/inference/test_img.yaml")
+    parser.add_argument("--inference_config", type=str, default="configs/inference/test.yaml")
+    parser.add_argument("--video_path", type=str, default=None)
+    parser.add_argument("--audio_path", type=str, default=None)
     parser.add_argument("--bbox_shift", type=int, default=0)
     parser.add_argument("--result_dir", default='./results', help="path to output")
 
